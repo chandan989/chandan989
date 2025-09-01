@@ -1,4 +1,3 @@
-# CHANDAN
 ### `> Neural Interface Engineer | Digital Reality Architect | Code Synthesist`
 
 ```ascii
