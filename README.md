@@ -166,7 +166,7 @@ SWIFT ████████████████████████�
 <img height="200" src="https://github-readme-stats.vercel.app/api?username=chandan989&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&bg_color=0D1117&title_color=00FF88&icon_color=00FF88&text_color=FFFFFF&custom_title=CHANDAN.stats()"/>
 </td>
 <td align="center">
-<img height="200" src="https://github-readme-stats.vercel.app/api/top-langs/?username=chandan989&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=00FF88&text_color=FFFFFF&custom_title=LANGUAGE_MATRIX"/>
+<img height="200" src="https://github-readme-stats.vercel.app/api/top-langs/?username=chandan989&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=00FF88&text_color=FFFFFF&custom_title=LANGUAGE_MATRIX&count_private=true"/>
 </td>
 </tr>
 </table>
