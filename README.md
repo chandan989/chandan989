@@ -1,91 +1,179 @@
-<!--
-TRANSMISSION LOG: 2025.09.01 // 12:36 IST
-ORIGIN: Lucknow Nexus, Indo-Gangetic Technocracy
-OPERATOR: Chandan Soni
-STATUS: ONLINE
--->
+# ⚡ CHANDAN SONI
+### Digital Architect | Founder @ Elykid | AI Innovation Catalyst
 
-<p align="center">
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/chandan989/chandan989/main/header.gif" alt="Sci-Fi Header GIF">
-</p>
+<div align="center">
+  
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Orbitron&size=24&duration=3000&pause=1000&color=00FF88&center=true&width=600&lines=Building+Tomorrow's+Digital+Infrastructure;AI+%2B+Blockchain+%2B+IoT+Solutions;Transforming+Ideas+into+Reality)](https://git.io/typing-svg)
 
-<div id="header" align="center">
-<h1>SYSTEM KERNEL: CHANDAN SONI</h1>
-<h3>> DIGITAL ARCHITECT | FOUNDER @ ELYKID | NEXUS OPERATOR <</h3>
-<p>Synchronizing human ambition with emergent AI. As the founder of <strong>Elykid</strong>, I construct the foundational logic for tomorrow's digital realities. My terminal is the nexus where code transcends function and becomes a bridge to the future.</p>
-
-<p align="center">
-<a href="https://www.google.com/search?q=https://www.linkedin.com/in/chandan-elykid">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/LINKEDIN-0077B5%3Fstyle%3Dfor-the-badge%26logo%3Dlinkedin%26logoColor%3Dwhite%26labelColor%3D101010">
-</a>
-<a href="https://elykid.com">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/ELYKID_HQ-2578B2%3Fstyle%3Dfor-the-badge%26logo%3Dworld%26logoColor%3Dwhite%26labelColor%3D101010">
-</a>
-<a href="mailto:chandan@elykid.com">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/DIRECT_COMMS-D14836%3Fstyle%3Dfor-the-badge%26logo%3Dgmail%26logoColor%3Dwhite%26labelColor%3D101010">
-</a>
-</p>
 </div>
 
-[ ACTIVE DEPLOYMENTS // CORE CHRONICLES ]
-These are the primary Elykid protocols currently interfacing with the global network.
+---
 
-Protocol ID
+## 🌐 **MISSION STATEMENT**
+Synchronizing human ambition with emergent AI. As the founder of **Elykid**, I architect the foundational systems that bridge today's possibilities with tomorrow's digital realities. My code is the nexus where innovation meets implementation.
 
-Objective & Status
+<div align="center">
 
-Technology Matrix
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/chandan-elykid)
+[![Elykid](https://img.shields.io/badge/Elykid_HQ-FF6B35?style=for-the-badge&logo=rocket&logoColor=white)](https://elykid.com)
+[![Email](https://img.shields.io/badge/Contact-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:chandan@elykid.com)
 
-🤖 PreCog
+</div>
 
-Objective: Hyperlocal predictive analytics for community harmony.<br>Status: [■■■■■] SYNCED & OPERATIONAL
+---
 
-Python TensorFlow NLP Big Data
+## 🚀 **ACTIVE PROTOCOLS** // Current Deployments
 
-⚡ AutoKinetic
+<table>
+<tr><td>
 
-Objective: Kinetic energy harvesting via smart traffic infrastructure.<br>Status: [■■■■□] PROTOTYPE VALIDATED
+### 🤖 **PreCog**
+**Hyperlocal Predictive Analytics Platform**
+- 🎯 **Objective**: Community harmony through AI-powered insights
+- 🟢 **Status**: Production Ready
+- 🛠️ **Stack**: Python • TensorFlow • NLP • Big Data Analytics
 
-IoT Embedded Systems Sensor Fusion
+</td><td>
 
-🏃 StrideOn
+### ⚡ **AutoKinetic** 
+**Smart Infrastructure Energy Harvesting**
+- 🎯 **Objective**: Kinetic energy capture from urban traffic
+- 🟡 **Status**: Prototype Validated
+- 🛠️ **Stack**: IoT • Embedded Systems • Sensor Fusion
 
-Objective: A Web3 metaverse powered by real-world movement.<br>Status: [■■■□□] BETA-NET ACTIVE
+</td></tr>
+<tr><td>
 
-Solidity Kotlin Flutter Web3.js
+### 🏃 **StrideOn**
+**Web3 Fitness Metaverse**
+- 🎯 **Objective**: Gamified movement in decentralized worlds
+- 🟡 **Status**: Beta Testing Phase
+- 🛠️ **Stack**: Solidity • Kotlin • Flutter • Web3.js
 
-🛡️ QuackShield
+</td><td>
 
-Objective: AI-driven defense matrix for decentralized communities.<br>Status: [■■■■■] DEPLOYMENT READY
+### 🛡️ **QuackShield**
+**AI-Powered Community Defense**
+- 🎯 **Objective**: Intelligent moderation for digital communities
+- 🟢 **Status**: Deployment Ready
+- 🛠️ **Stack**: PyTorch • Discord.py • NLP • AI Ethics
 
-PyTorch Discord.py NLP AI Ethics
+</td></tr>
+</table>
 
-🧠 The-AutoML
+### 🧠 **The-AutoML**
+**Autonomous Machine Learning Pipeline Engine**
+- 🎯 **Objective**: Self-optimizing ML workflows for rapid deployment
+- 🟡 **Status**: Core algorithms stable, optimization in progress
+- 🛠️ **Stack**: Scikit-learn • Kubeflow • Docker • FastAPI
 
-Objective: Autonomous end-to-end machine learning pipelines.<br>Status: [■■■■□] CORE ALGORITHMS STABLE
+---
 
-Scikit-learn Kubeflow Docker FastAPI
+## 💻 **TECHNICAL ARSENAL**
 
-[ CORE MODULES // COGNITIVE IMPLANTS ]
-<p align="center">
-<a href="https://skillicons.dev">
-<img src="https://www.google.com/search?q=https://skillicons.dev/icons%3Fi%3Dpython,kotlin,js,solidity,html,css,tensorflow,pytorch,sklearn,opencv,react,flutter,android,nodejs,fastapi,postgres,mongodb,firebase,gcp,aws,docker,git" />
-</a>
-</p>
+<div align="center">
 
-[ LIVE BIOMETRICS // NEURAL THROUGHPUT ]
-<p align="center">
-<img src="https://www.google.com/search?q=https://github-readme-stats.vercel.app/api%3Fusername%3Dchandan989%26show_icons%3Dtrue%26theme%3Dtokyonight%26hide_border%3Dtrue%26count_private%3Dtrue%26bg_color%3D0D1117" alt="GitHub Stats">
-<img src="https://www.google.com/search?q=https://github-readme-stats.vercel.app/api/top-langs/%3Fusername%3Dchandan989%26layout%3Dcompact%26theme%3Dtokyonight%26hide_border%3Dtrue%26bg_color%3D0D1117" alt="Top Languages">
-</p>
+### **Languages & Frameworks**
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Solidity](https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=solidity&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 
-[ PRIME_DIRECTIVE.log ]
-"In a world where data flows like digital blood through silicon veins, I craft the synapses that connect human dreams to machine reality. Every line of code is a neuron, every algorithm a thought in the collective consciousness of our digital future."
+### **AI & Machine Learning**
+![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=TensorFlow&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=PyTorch&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-27338e?style=for-the-badge&logo=OpenCV&logoColor=white)
 
-<p align="center">
-<a href="https://github.com/chandan989">
-<img src="https://raw.githubusercontent.com/rodrigograca31/rodrigograca31/master/matrix.svg" alt="Matrix SVG">
-</a>
-</p>
+### **Cloud & DevOps**
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![GCP](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-<!-- END_TRANSMISSION -->
+</div>
+
+---
+
+## 📊 **SYSTEM METRICS** // Live Performance Data
+
+<div align="center">
+<img height="180em" src="https://github-readme-stats.vercel.app/api?username=chandan989&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&bg_color=0D1117&title_color=00FF88&icon_color=00FF88&text_color=FFFFFF" alt="GitHub Stats"/>
+<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=chandan989&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=00FF88&text_color=FFFFFF" alt="Top Languages"/>
+</div>
+
+<div align="center">
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=chandan989&theme=tokyonight&hide_border=true&background=0D1117&stroke=00FF88&ring=00FF88&fire=00FF88&currStreakNum=FFFFFF&sideNums=FFFFFF&currStreakLabel=00FF88&sideLabels=00FF88&dates=FFFFFF" alt="GitHub Streak"/>
+</div>
+
+---
+
+## 🎯 **CURRENT_FOCUS.exe**
+
+```python
+class DigitalArchitect:
+    def __init__(self):
+        self.current_focus = [
+            "🔬 Advanced AI model optimization",
+            "🌐 Decentralized application architecture", 
+            "⚡ IoT ecosystem integration",
+            "🛡️ AI ethics and safety protocols"
+        ]
+        self.next_milestone = "Launching Elykid's flagship AI suite"
+        
+    def build_future(self):
+        return "One algorithm at a time"
+```
+
+---
+
+## 🌟 **INNOVATION PHILOSOPHY**
+
+> *"In the convergence of AI, blockchain, and IoT lies the blueprint for humanity's next evolutionary leap. Every line of code is a step toward that future."*
+
+**Core Principles:**
+- 🧠 **AI-First Architecture**: Designing systems that learn and evolve
+- 🔗 **Decentralized by Design**: Building resilient, distributed networks  
+- ⚡ **Efficiency Through Innovation**: Maximum impact with minimal resources
+- 🛡️ **Ethical Implementation**: Technology that serves humanity responsibly
+
+---
+
+## 📈 **ACTIVITY_MATRIX.log**
+
+<div align="center">
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=chandan989&theme=tokyo-night&bg_color=0D1117&color=00FF88&line=00FF88&point=FFFFFF&area=true&hide_border=true" alt="Activity Graph"/>
+</div>
+
+---
+
+## 🤝 **ESTABLISH_CONNECTION**
+
+**Seeking collaboration on:**
+- 🚀 AI/ML research and implementation projects
+- 🌐 Blockchain and Web3 development initiatives  
+- 🔧 IoT solutions for smart city infrastructure
+- 💡 Open source contributions to emerging tech
+
+**Available for:**
+- Technical consulting and system architecture
+- Startup mentoring and product development guidance
+- Speaking engagements on AI and emerging technologies
+
+---
+
+<div align="center">
+
+### 🔮 **"The future belongs to those who code it into existence"**
+
+![Profile Views](https://komarev.com/ghpvc/?username=chandan989&color=00FF88&style=for-the-badge)
+
+</div>
+
+---
+
+<div align="center">
+<sub>🏗️ Engineered in Lucknow | Deployed Globally | Open Source Forever 🚀</sub>
+</div>
