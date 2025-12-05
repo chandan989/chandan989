@@ -1,4 +1,4 @@
-# ⚡ CHANDAN SONI
+# CHANDAN SONI
 ### Digital Architect | Founder @ Elykid | AI × Web3 Innovation Catalyst
 
 <div align="center">
