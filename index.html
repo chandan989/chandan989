@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocol Light | Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Unbounded:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#050505',
+                        canvas: '#FFFFFF',
+                        construct: '#E5E5E5',
+                        pulse: '#2A00FF',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Unbounded', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    spacing: {
+                        'grid': '4rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lenis Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        /* Core Reset & Cursor */
+        :root {
+            --cursor-size: 20px;
+        }
+        
+        body {
+            background-color: #FFFFFF;
+            color: #050505;
+            cursor: none; /* Hide default cursor */
+            overflow-x: hidden;
+        }
+
+        a, button, .interactive {
+            cursor: none; /* Ensure elements don't show pointer */
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 1px solid #050505;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease, border-radius 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        #cursor.active {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #2A00FF;
+            mix-blend-mode: normal;
+        }
+
+        #cursor-crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        #cursor.active + #cursor-crosshair {
+            opacity: 1;
+        }
+
+        /* Typography Utilities */
+        .text-display {
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        /* Grid Utilities */
+        .grid-lines {
+            background-size: 4rem 4rem;
+            background-image:
+                linear-gradient(to right, #E5E5E5 1px, transparent 1px),
+                linear-gradient(to bottom, #E5E5E5 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        .border-grid {
+            border: 1px solid #E5E5E5;
+        }
+
+        /* Glitch Effect for Images */
+        .glitch-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glitch-wrapper:hover img {
+            filter: grayscale(100%) contrast(120%);
+        }
+
+        .glitch-wrapper::before,
+        .glitch-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            mix-blend-mode: hard-light;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .glitch-wrapper:hover::before {
+            background-color: rgba(255, 0, 0, 0.2);
+            transform: translateX(-2px);
+            opacity: 1;
+        }
+
+        .glitch-wrapper:hover::after {
+            background-color: rgba(0, 0, 255, 0.2);
+            transform: translateX(2px);
+            opacity: 1;
+        }
+
+        /* Card Hover */
+        .protocol-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .protocol-card:hover {
+            border-color: #050505;
+        }
+        .protocol-card:hover .card-content {
+            transform: translateX(8px);
+        }
+        .card-content {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Utilities */
+        .reveal-text {
+            visibility: hidden;
+        }
+        
+        .sticky-meta {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-pulse selection:text-white">
+
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+
+    <!-- Fixed Metadata (Side) -->
+    <div class="fixed left-0 top-0 h-full w-12 border-r border-construct flex flex-col justify-between items-center py-8 z-40 bg-canvas hidden md:flex">
+        <div class="font-mono text-[10px] text-void/50 rotate-180 sticky-meta">SYS: ONLINE</div>
+        <div class="w-[1px] h-24 bg-construct"></div>
+        <div class="font-mono text-[10px] text-pulse sticky-meta">V.2.0.50</div>
+    </div>
+
+    <div class="fixed right-0 top-0 h-full w-12 border-l border-construct flex flex-col justify-between items-center py-8 z-40 bg-canvas hidden md:flex">
+        <div class="font-mono text-[10px] text-void/50 sticky-meta" id="scroll-pos">0%</div>
+        <div class="w-[1px] h-24 bg-construct"></div>
+        <div class="font-mono text-[10px] text-void sticky-meta">2026</div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="md:pl-12 md:pr-12 w-full min-h-screen relative">
+        
+        <!-- Navbar -->
+        <nav class="fixed top-0 left-0 md:left-12 md:right-12 right-0 h-16 border-b border-construct bg-canvas/90 backdrop-blur-sm z-30 flex items-center justify-between px-6">
+            <div class="font-mono text-xs tracking-widest uppercase">
+                <span class="text-pulse">●</span> PROTOCOL_LIGHT
+            </div>
+            <div class="hidden md:flex gap-8 font-mono text-xs">
+                <a href="#work" class="hover:text-pulse transition-colors interactive">INDEX</a>
+                <a href="#about" class="hover:text-pulse transition-colors interactive">SCHEMATICS</a>
+                <a href="#contact" class="hover:text-pulse transition-colors interactive">TRANSMIT</a>
+            </div>
+            <div class="md:hidden font-mono text-xs">[MENU]</div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="min-h-screen flex flex-col border-b border-construct relative pt-16">
+            <!-- Background Grid -->
+            <div class="absolute inset-0 grid-lines pointer-events-none -z-10 opacity-30"></div>
+
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-12 h-full">
+                <!-- Top Left Status -->
+                <div class="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-construct p-6 md:p-8 flex flex-col justify-between">
+                    <div class="font-mono text-xs text-void/60 scramble-on-load">
+                        [COORDINATES]<br>
+                        LAT: 28.6139° N<br>
+                        LON: 77.2090° E
+                    </div>
+                    <div class="hidden md:block w-4 h-4 border border-pulse animate-pulse"></div>
+                </div>
+
+                <!-- Center Main Typography -->
+                <div class="col-span-1 md:col-span-6 p-6 md:p-12 flex flex-col justify-center relative border-b md:border-b-0 md:border-r border-construct">
+                    <h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl text-display uppercase mb-8">
+                        <span class="block scramble-on-load">Designing</span>
+                        <span class="block text-void/80 scramble-on-load">The Future</span>
+                        <span class="block text-void/40 scramble-on-load">One Pixel</span>
+                        <span class="block text-pulse scramble-on-load">At A Time.</span>
+                    </h1>
+                </div>
+
+                <!-- Right Interaction Area -->
+                <div class="col-span-1 md:col-span-3 p-6 md:p-8 flex flex-col justify-end items-end bg-void/5">
+                    <a href="#work" class="group relative inline-flex items-center justify-center px-8 py-4 border border-void/20 hover:border-pulse bg-canvas transition-all duration-300 interactive overflow-hidden">
+                        <span class="font-mono text-xs uppercase tracking-widest relative z-10 group-hover:text-pulse transition-colors">
+                            [ View Protocols ]
+                        </span>
+                        <div class="absolute inset-0 bg-void/5 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marquee / Divider -->
+        <div class="border-b border-construct overflow-hidden whitespace-nowrap py-4 bg-void text-canvas font-mono text-xs uppercase tracking-[0.2em]">
+            <div class="inline-block animate-marquee">
+                System Status: Optimal /// Memory: 98% /// Render: High-Fidelity /// Architecting Reality /// 
+                System Status: Optimal /// Memory: 98% /// Render: High-Fidelity /// Architecting Reality ///
+            </div>
+        </div>
+
+        <!-- Work / Protocols Section -->
+        <section id="work" class="min-h-screen border-b border-construct">
+            <div class="grid grid-cols-1 md:grid-cols-12 h-full">
+                
+                <!-- Section Header -->
+                <div class="col-span-1 md:col-span-2 p-6 border-r border-construct md:sticky top-16 h-fit">
+                    <h2 class="font-display text-2xl uppercase font-bold mb-2">Protocols</h2>
+                    <span class="font-mono text-[10px] text-void/60">SELECTED WORKS 2024-2026</span>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="col-span-1 md:col-span-10">
+                    
+                    <!-- Project 01 -->
+                    <article class="grid grid-cols-1 md:grid-cols-2 border-b border-construct protocol-card interactive group cursor-none">
+                        <div class="p-8 md:p-16 flex flex-col justify-between border-r border-construct h-full">
+                            <div>
+                                <span class="font-mono text-xs text-pulse mb-4 block">001</span>
+                                <h3 class="font-display text-4xl uppercase mb-4 card-content">Neural Interface</h3>
+                                <p class="font-sans text-void/70 max-w-sm mb-8">A conceptual operating system for brain-computer interfaces. Minimal latency, maximum clarity.</p>
+                                <div class="flex gap-2 font-mono text-[10px] uppercase text-void/50">
+                                    <span class="border border-construct px-2 py-1">UI/UX</span>
+                                    <span class="border border-construct px-2 py-1">Research</span>
+                                </div>
+                            </div>
+                            <div class="mt-12 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="w-2 h-2 bg-pulse"></div>
+                                <span class="font-mono text-xs">INITIATE</span>
+                            </div>
+                        </div>
+                        <div class="h-96 md:h-auto bg-gray-100 relative overflow-hidden glitch-wrapper">
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop" alt="Project 1" class="w-full h-full object-cover filter grayscale contrast-125 transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute bottom-4 right-4 font-mono text-[10px] bg-canvas px-2 py-1 border border-void">FIG. A</div>
+                        </div>
+                    </article>
+
+                    <!-- Project 02 -->
+                    <article class="grid grid-cols-1 md:grid-cols-2 border-b border-construct protocol-card interactive group cursor-none">
+                        <div class="h-96 md:h-auto bg-gray-100 relative overflow-hidden glitch-wrapper border-r border-construct order-2 md:order-1">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" alt="Project 2" class="w-full h-full object-cover filter grayscale contrast-125 transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute top-4 left-4 font-mono text-[10px] bg-canvas px-2 py-1 border border-void">FIG. B</div>
+                        </div>
+                        <div class="p-8 md:p-16 flex flex-col justify-between h-full order-1 md:order-2">
+                            <div>
+                                <span class="font-mono text-xs text-pulse mb-4 block">002</span>
+                                <h3 class="font-display text-4xl uppercase mb-4 card-content">Void Finance</h3>
+                                <p class="font-sans text-void/70 max-w-sm mb-8">Algorithmic trading dashboard designed for speed and data density. Information without noise.</p>
+                                <div class="flex gap-2 font-mono text-[10px] uppercase text-void/50">
+                                    <span class="border border-construct px-2 py-1">Fintech</span>
+                                    <span class="border border-construct px-2 py-1">Web App</span>
+                                </div>
+                            </div>
+                            <div class="mt-12 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="w-2 h-2 bg-pulse"></div>
+                                <span class="font-mono text-xs">INITIATE</span>
+                            </div>
+                        </div>
+                    </article>
+
+                     <!-- Project 03 -->
+                     <article class="grid grid-cols-1 md:grid-cols-2 border-b border-construct protocol-card interactive group cursor-none">
+                        <div class="p-8 md:p-16 flex flex-col justify-between border-r border-construct h-full">
+                            <div>
+                                <span class="font-mono text-xs text-pulse mb-4 block">003</span>
+                                <h3 class="font-display text-4xl uppercase mb-4 card-content">Echo Chamber</h3>
+                                <p class="font-sans text-void/70 max-w-sm mb-8">Audio visualization tool using WebGL. Seeing sound in three dimensions.</p>
+                                <div class="flex gap-2 font-mono text-[10px] uppercase text-void/50">
+                                    <span class="border border-construct px-2 py-1">WebGL</span>
+                                    <span class="border border-construct px-2 py-1">Creative Dev</span>
+                                </div>
+                            </div>
+                            <div class="mt-12 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="w-2 h-2 bg-pulse"></div>
+                                <span class="font-mono text-xs">INITIATE</span>
+                            </div>
+                        </div>
+                        <div class="h-96 md:h-auto bg-gray-100 relative overflow-hidden glitch-wrapper">
+                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Project 3" class="w-full h-full object-cover filter grayscale contrast-125 transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute bottom-4 right-4 font-mono text-[10px] bg-canvas px-2 py-1 border border-void">FIG. C</div>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section (Asymmetric) -->
+        <section id="about" class="min-h-[80vh] border-b border-construct grid grid-cols-1 md:grid-cols-12 bg-canvas relative">
+            
+            <!-- Left Header -->
+            <div class="col-span-1 md:col-span-4 p-8 md:p-16 border-r border-construct flex flex-col">
+                <h2 class="font-display text-4xl md:text-5xl uppercase font-bold leading-tight">
+                    The<br>Architect<br>Behind<br>The Grid.
+                </h2>
+                <div class="mt-auto pt-12">
+                     <!-- Profile Image with Glitch -->
+                     <div class="w-32 h-32 md:w-48 md:h-48 overflow-hidden glitch-wrapper border border-construct mb-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" alt="Profile" class="w-full h-full object-cover filter grayscale contrast-125">
+                     </div>
+                     <p class="font-mono text-xs text-void/60">ID: USER_ADMIN</p>
+                </div>
+            </div>
+
+            <!-- Empty Middle (The "Tension") -->
+            <div class="hidden md:block col-span-4 border-r border-construct relative">
+                 <div class="absolute inset-0 grid-lines opacity-10"></div>
+            </div>
+
+            <!-- Right Content -->
+            <div class="col-span-1 md:col-span-4 p-8 md:p-16 flex flex-col justify-center">
+                <p class="font-sans text-lg md:text-xl leading-relaxed mb-8">
+                    I don't just write code; I construct digital environments. My philosophy is rooted in functionality and brutality. If it doesn't serve a purpose, delete it.
+                </p>
+                <p class="font-sans text-lg md:text-xl leading-relaxed mb-12 text-void/60">
+                    Specializing in high-performance web applications and design systems that scale into the future.
+                </p>
+
+                <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                    <div>
+                        <h4 class="text-void/40 mb-2 uppercase">[ Stack ]</h4>
+                        <ul class="space-y-1">
+                            <li>React / Next.js</li>
+                            <li>TypeScript</li>
+                            <li>WebGL / Three.js</li>
+                            <li>Node.js</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-void/40 mb-2 uppercase">[ Services ]</h4>
+                        <ul class="space-y-1">
+                            <li>Creative Dev</li>
+                            <li>UI Engineering</li>
+                            <li>System Architecture</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="contact" class="bg-void text-canvas py-24 px-6 md:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div class="col-span-1 md:col-span-6">
+                    <h2 class="font-display text-6xl md:text-8xl uppercase mb-8 scramble-on-load">Let's<br>Build.</h2>
+                    <a href="mailto:hello@protocol.light" class="inline-block border border-canvas/20 px-8 py-4 font-mono text-sm hover:bg-canvas hover:text-void transition-colors interactive">
+                        INITIATE_COMMUNICATION()
+                    </a>
+                </div>
+                <div class="col-span-1 md:col-span-6 flex flex-col justify-end items-end text-right font-mono text-xs text-canvas/50">
+                    <div class="mb-4">
+                        <p>SAN FRANCISCO, CA</p>
+                        <p>37.7749° N, 122.4194° W</p>
+                    </div>
+                    <p>&copy; 2026 PROTOCOL LIGHT SYSTEM.</p>
+                    <p>ALL RIGHTS RESERVED.</p>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // 1. Lenis Smooth Scroll
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        })
+
+        function raf(time) {
+            lenis.raf(time)
+            requestAnimationFrame(raf)
+        }
+        requestAnimationFrame(raf)
+
+        // 2. Scramble Text Effect
+        class TextScramble {
+            constructor(el) {
+                this.el = el
+                this.chars = '!<>-_\\/[]{}—=+*^?#________'
+                this.update = this.update.bind(this)
+            }
+            setText(newText) {
+                const oldText = this.el.innerText
+                const length = Math.max(oldText.length, newText.length)
+                const promise = new Promise((resolve) => this.resolve = resolve)
+                this.queue = []
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || ''
+                    const to = newText[i] || ''
+                    const start = Math.floor(Math.random() * 40)
+                    const end = start + Math.floor(Math.random() * 40)
+                    this.queue.push({ from, to, start, end })
+                }
+                cancelAnimationFrame(this.frameRequest)
+                this.frame = 0
+                this.update()
+                return promise
+            }
+            update() {
+                let output = ''
+                let complete = 0
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i]
+                    if (this.frame >= end) {
+                        complete++
+                        output += to
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar()
+                            this.queue[i].char = char
+                        }
+                        output += `<span class="opacity-50">${char}</span>`
+                    } else {
+                        output += from
+                    }
+                }
+                this.el.innerHTML = output
+                if (complete === this.queue.length) {
+                    this.resolve()
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update)
+                    this.frame++
+                }
+            }
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)]
+            }
+        }
+
+        // Initialize Scramble
+        const phrases = document.querySelectorAll('.scramble-on-load')
+        phrases.forEach(el => {
+            const fx = new TextScramble(el)
+            // Store original text
+            const originalText = el.innerText
+            // Set initial random text or empty
+            el.innerText = '' 
+            // Trigger scramble to original text
+            setTimeout(() => {
+                fx.setText(originalText)
+            }, 500 + Math.random() * 1000)
+        })
+
+        // 3. Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        const interactives = document.querySelectorAll('.interactive, a, button');
+        let mouseX = 0;
+        let mouseY = 0;
+        let cursorX = 0;
+        let cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Smooth cursor animation loop
+        function animateCursor() {
+            const dx = mouseX - cursorX;
+            const dy = mouseY - cursorY;
+            
+            cursorX += dx * 0.15;
+            cursorY += dy * 0.15;
+            
+            cursor.style.left = `${cursorX}px`;
+            cursor.style.top = `${cursorY}px`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover states
+        interactives.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('active');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('active');
+            });
+        });
+
+        // 4. Update Scroll Position (Sticky Meta)
+        const scrollPosEl = document.getElementById('scroll-pos');
+        lenis.on('scroll', (e) => {
+            const height = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (e.scroll / height) * 100;
+            if(scrollPosEl) scrollPosEl.innerText = Math.round(scrolled) + '%';
+        });
+
+    </script>
+</body>
+</html>
