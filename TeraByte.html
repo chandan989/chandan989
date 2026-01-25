@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERRA-BYTE | Digital Cartography</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cotton: '#F2F0E9',
+                        ink: '#1C1C1C',
+                        safety: '#FF4D00',
+                        moss: '#B8E986',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['IBM Plex Mono', 'monospace'],
+                    },
+                    spacing: {
+                        'card': '4px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* TERRA-BYTE DESIGN SYSTEM OVERRIDES */
+        
+        body {
+            background-color: #F2F0E9;
+            color: #1C1C1C;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* The Hard Shadow Class */
+        .brutal-card {
+            background-color: #F2F0E9;
+            border: 2px solid #1C1C1C;
+            box-shadow: 6px 6px 0px 0px #1C1C1C;
+            transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+        }
+        
+        .brutal-card:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 8px 8px 0px 0px #1C1C1C;
+        }
+
+        /* Tactical Button */
+        .tactical-btn {
+            background-color: #FFFFFF;
+            border: 2px solid #1C1C1C;
+            box-shadow: 4px 4px 0px 0px #1C1C1C;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-transform: uppercase;
+            user-select: none;
+        }
+
+        .tactical-btn:hover {
+            background-color: #FF4D00; /* Safety Orange */
+            color: white;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #1C1C1C;
+        }
+
+        .tactical-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #1C1C1C;
+        }
+
+        /* Halftone Pattern */
+        .halftone-moss {
+            background-image: radial-gradient(#B8E986 2px, transparent 2px);
+            background-size: 8px 8px;
+        }
+        
+        .halftone-orange {
+            background-image: radial-gradient(#FF4D00 2px, transparent 2px);
+            background-size: 8px 8px;
+        }
+
+        /* Marquee Animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+        }
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Topographic Background Pattern (SVG inline) */
+        .topo-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 C 20 20, 40 0, 60 10 C 80 20, 100 10, 120 20' stroke='%23d4d1c9' stroke-width='1' fill='none'/%3E%3Cpath d='M0 30 C 30 40, 50 20, 70 35 C 90 50, 110 30, 130 40' stroke='%23d4d1c9' stroke-width='1' fill='none'/%3E%3Cpath d='M0 60 C 20 50, 40 70, 60 60 C 80 50, 100 70, 120 60' stroke='%23d4d1c9' stroke-width='1' fill='none'/%3E%3Cpath d='M0 85 C 30 75, 50 95, 80 85 C 100 75, 120 90, 140 80' stroke='%23d4d1c9' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+        }
+
+        /* Notifications / Toast Container */
+        #notification-deck {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .sys-toast {
+            pointer-events: auto;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Custom Selection */
+        ::selection {
+            background: #FF4D00;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- MARQUEE HEADER -->
+    <div class="w-full bg-ink text-cotton font-serif text-sm py-2 border-b-2 border-ink marquee-container">
+        <div class="marquee-content tracking-widest">
+            THE GRID IS LIVE • SESSION 402 • PROTOCOL ACTIVE • RESOURCE ACQUIRED: 24.5 STX • TOPOGRAPHY CALIBRATED • THE GRID IS LIVE • SESSION 402 • PROTOCOL ACTIVE • RESOURCE ACQUIRED: 24.5 STX • TOPOGRAPHY CALIBRATED •
+        </div>
+    </div>
+
+    <!-- MAIN NAV -->
+    <nav class="w-full px-6 py-6 flex justify-between items-center bg-cotton border-b-2 border-ink sticky top-0 z-50">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <div class="w-8 h-8 bg-safety border-2 border-ink"></div>
+            <span class="font-serif font-black text-2xl tracking-tighter">TERRA-BYTE</span>
+        </div>
+        
+        <div class="hidden md:flex gap-8 font-mono text-sm font-bold tracking-tight">
+            <button onclick="scrollToSection('map-section')" class="hover:text-safety transition-colors uppercase">[ MAP_VIEW ]</button>
+            <button onclick="scrollToSection('ledger-section')" class="hover:text-safety transition-colors uppercase">[ LEDGER ]</button>
+            <button onclick="showNotification('FIELD GUIDE', 'Manual downloaded to local storage.')" class="hover:text-safety transition-colors uppercase">[ FIELD_GUIDE ]</button>
+        </div>
+
+        <button id="wallet-btn" class="tactical-btn px-6 py-2 font-mono text-sm font-bold hidden sm:block">
+            CONNECT_WALLET
+        </button>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <main class="flex-grow flex flex-col md:flex-row w-full max-w-7xl mx-auto p-4 md:p-10 gap-8">
+        
+        <!-- LEFT COLUMN: COPY -->
+        <div class="w-full md:w-5/12 flex flex-col justify-center space-y-8 z-10">
+            <div id="sys-status" class="inline-block border-2 border-ink px-2 py-1 bg-moss font-mono text-xs w-max brutal-card" style="box-shadow: 3px 3px 0px 0px #1C1C1C;">
+                SYS_STATUS: ONLINE
+            </div>
+            
+            <h1 class="font-serif text-6xl md:text-7xl lg:text-8xl leading-[0.9] text-ink font-bold">
+                ETCH<br>YOUR<br><span class="text-safety italic">PATH.</span>
+            </h1>
+
+            <p class="font-serif text-xl md:text-2xl leading-relaxed max-w-md border-l-4 border-ink pl-6 italic">
+                Digital Cartography for the modern explorer. You aren't just moving; you are inscribing your existence onto the immutable ledger.
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 font-mono text-xs text-ink/70">
+                <div class="border-t border-ink pt-2">
+                    <p>LAT: <span id="lat-val">40.7128</span>° N</p>
+                    <p>LON: <span id="lon-val">74.0060</span>° W</p>
+                </div>
+                <div class="border-t border-ink pt-2">
+                    <p>EPOCH: 1735934</p>
+                    <p>BLK: #82910</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button id="initiate-btn" class="tactical-btn px-8 py-4 font-mono font-bold text-lg w-full md:w-auto text-center">
+                    INITIATE SEQUENCE
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: THE INTERACTIVE MAP (CANVAS) -->
+        <div id="map-section" class="w-full md:w-7/12 relative h-[500px] md:h-auto min-h-[500px]">
+            <!-- The Card Container -->
+            <div class="absolute inset-0 brutal-card flex flex-col overflow-hidden">
+                <!-- Map Header -->
+                <div class="bg-cotton border-b-2 border-ink p-3 flex justify-between items-center font-mono text-xs">
+                    <span id="sector-id">SECTOR_09</span>
+                    <span id="recording-status" class="text-ink/40">STANDBY_MODE</span>
+                </div>
+                
+                <!-- The Canvas Area -->
+                <div class="relative flex-grow bg-cotton topo-bg cursor-crosshair overflow-hidden" id="canvas-container">
+                    <canvas id="trailCanvas" class="absolute inset-0 w-full h-full"></canvas>
+                    
+                    <!-- UI Overlay on Map -->
+                    <div class="absolute bottom-4 left-4 p-4 bg-cotton border-2 border-ink font-mono text-xs shadow-[4px_4px_0px_0px_#1C1C1C]">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-ink/60">SPEED</span>
+                            <span class="text-xl font-bold font-serif" id="speed-display">0.0 m/s</span>
+                        </div>
+                    </div>
+
+                     <div class="absolute top-4 right-4 p-2 bg-moss border-2 border-ink font-mono text-xs shadow-[4px_4px_0px_0px_#1C1C1C]">
+                        <span id="stx-balance" class="font-bold">+12.4 STX</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FEATURE GRID (Index Cards) -->
+    <section id="ledger-section" class="bg-ink text-cotton py-20 border-t-2 border-ink">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <h2 class="font-serif text-4xl md:text-5xl">THE BLUEPRINT</h2>
+                <span class="font-mono text-sm hidden md:block">SCROLL_DOWN_FOR_SPECS</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="brutal-card !bg-cotton !text-ink p-8 flex flex-col justify-between min-h-[300px] group cursor-pointer hover:-translate-y-2" onclick="showNotification('SIGNAL STRENGTH', 'GPS Telemetry is operating at 98% efficiency.')">
+                    <div>
+                        <div class="w-12 h-12 bg-safety border-2 border-ink mb-6 flex items-center justify-center font-mono font-bold text-white text-xl">01</div>
+                        <h3 class="font-serif text-2xl font-bold mb-4 group-hover:underline decoration-2 decoration-safety underline-offset-4">THE SIGNAL</h3>
+                        <p class="font-mono text-sm leading-relaxed">
+                            We track movement via GPS telemetry. Your physical exertion generates the Signal. High visibility means high reward.
+                        </p>
+                    </div>
+                    <div class="mt-8 border-t-2 border-ink pt-4 font-mono text-xs font-bold text-safety uppercase">
+                        Reading Biometrics...
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="brutal-card !bg-cotton !text-ink p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden group cursor-pointer hover:-translate-y-2" onclick="showNotification('TERRITORY', 'Sector 09 is currently unclaimed. Close the loop to claim.')">
+                    <div class="absolute top-0 right-0 w-24 h-24 halftone-moss border-l-2 border-b-2 border-ink"></div>
+                    <div>
+                        <div class="w-12 h-12 bg-cotton border-2 border-ink mb-6 flex items-center justify-center font-mono font-bold text-xl">02</div>
+                        <h3 class="font-serif text-2xl font-bold mb-4 group-hover:underline decoration-2 decoration-moss underline-offset-4">TERRITORY</h3>
+                        <p class="font-mono text-sm leading-relaxed">
+                            Close the loop to secure the grid. Captured sectors yield passive resources. Do not let the line break.
+                        </p>
+                    </div>
+                    <div class="mt-8 border-t-2 border-ink pt-4 font-mono text-xs font-bold uppercase">
+                        Status: UNCLAIMED
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="brutal-card !bg-cotton !text-ink p-8 flex flex-col justify-between min-h-[300px] group cursor-pointer hover:-translate-y-2" onclick="showNotification('LEDGER', 'Block height 89912 verified. Hash valid.')">
+                    <div>
+                        <div class="w-12 h-12 bg-ink border-2 border-ink mb-6 flex items-center justify-center font-mono font-bold text-cotton text-xl">03</div>
+                        <h3 class="font-serif text-2xl font-bold mb-4 group-hover:underline decoration-2 decoration-ink underline-offset-4">THE LEDGER</h3>
+                        <p class="font-mono text-sm leading-relaxed">
+                            All paths are etched onto the chain. Immutable proof of physical work. Verify your exertion.
+                        </p>
+                    </div>
+                    <div class="mt-8 border-t-2 border-ink pt-4 font-mono text-xs font-bold text-ink uppercase">
+                        Block Height: 89912
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-cotton border-t-2 border-ink py-10">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+                <span class="font-serif font-black text-3xl tracking-tighter">TERRA-BYTE</span>
+                <p class="font-mono text-xs mt-2">© 2024 PROTOCOL LABS. ALL RIGHTS RESERVED.</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <button onclick="showNotification('REDIRECT', 'Opening X (Twitter) Protocol...')" class="tactical-btn w-10 h-10 flex items-center justify-center font-mono font-bold">X</button>
+                <button onclick="showNotification('REDIRECT', 'Opening Discord Protocol...')" class="tactical-btn w-10 h-10 flex items-center justify-center font-mono font-bold">D</button>
+                <button onclick="showNotification('REDIRECT', 'Opening Medium Protocol...')" class="tactical-btn w-10 h-10 flex items-center justify-center font-mono font-bold">M</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Deck -->
+    <div id="notification-deck"></div>
+
+    <!-- SCRIPT FOR CANVAS DRAWING (THE INK TRAIL) & LOGIC -->
+    <script>
+        // --- NOTIFICATION SYSTEM ---
+        function showNotification(title, message) {
+            const deck = document.getElementById('notification-deck');
+            
+            const toast = document.createElement('div');
+            toast.className = 'sys-toast bg-cotton border-2 border-ink p-4 min-w-[300px] max-w-sm relative brutal-card';
+            toast.style.boxShadow = '4px 4px 0px 0px #1C1C1C';
+            
+            toast.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-mono font-bold text-xs bg-ink text-cotton px-1">${title}</span>
+                    <span class="font-mono text-xs text-ink/50 cursor-pointer hover:text-safety" onclick="this.parentElement.parentElement.remove()">[x]</span>
+                </div>
+                <p class="font-serif font-bold text-lg leading-tight">${message}</p>
+            `;
+            
+            deck.appendChild(toast);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+                showNotification('NAVIGATION', `Redirecting to ${id.toUpperCase()}...`);
+            }
+        }
+
+        // --- BUTTON LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Wallet Logic
+            const walletBtn = document.getElementById('wallet-btn');
+            const stxBalance = document.getElementById('stx-balance');
+            let isConnected = false;
+
+            walletBtn.addEventListener('click', () => {
+                if (isConnected) {
+                    showNotification('WALLET', 'Wallet already connected.');
+                    return;
+                }
+                
+                walletBtn.innerText = "HANDSHAKING...";
+                walletBtn.classList.add('bg-gray-200');
+                
+                setTimeout(() => {
+                    isConnected = true;
+                    walletBtn.innerText = "0x7F...3A21";
+                    walletBtn.classList.remove('bg-gray-200');
+                    walletBtn.classList.add('bg-safety', 'text-white'); // Active state style
+                    
+                    stxBalance.innerText = "+138.2 STX";
+                    stxBalance.classList.add('text-safety');
+                    
+                    showNotification('CONNECTION ESTABLISHED', 'Wallet 0x7F...3A21 successfully linked to Session 402.');
+                }, 1500);
+            });
+
+            // Initiate Sequence Logic
+            const initBtn = document.getElementById('initiate-btn');
+            const statusBadge = document.getElementById('sys-status');
+            const mapHeaderStatus = document.getElementById('recording-status');
+            let isRecording = false;
+
+            initBtn.addEventListener('click', () => {
+                scrollToSection('map-section');
+                
+                setTimeout(() => {
+                    if (!isRecording) {
+                        isRecording = true;
+                        
+                        // Update Map UI
+                        mapHeaderStatus.innerText = "RECORDING_MOVEMENT";
+                        mapHeaderStatus.classList.remove('text-ink/40');
+                        mapHeaderStatus.classList.add('text-safety', 'animate-pulse');
+                        
+                        // Update Status Badge
+                        statusBadge.innerText = "SYS_STATUS: TRACKING";
+                        statusBadge.style.backgroundColor = '#FF4D00'; // Safety Orange
+                        statusBadge.style.color = '#FFFFFF';
+
+                        // Change Button Text
+                        initBtn.innerText = "TERMINATE SESSION";
+                        initBtn.style.backgroundColor = '#1C1C1C';
+                        initBtn.style.color = '#FFFFFF';
+
+                        showNotification('SEQUENCE INITIATED', 'Tracking protocols active. Etch your path.');
+                    } else {
+                        isRecording = false;
+                        
+                        // Update Map UI
+                        mapHeaderStatus.innerText = "SESSION_PAUSED";
+                        mapHeaderStatus.classList.remove('text-safety', 'animate-pulse');
+                        mapHeaderStatus.classList.add('text-ink/40');
+
+                        // Reset Status Badge
+                        statusBadge.innerText = "SYS_STATUS: ONLINE";
+                        statusBadge.style.backgroundColor = '#B8E986'; // Moss
+                        statusBadge.style.color = '#1C1C1C';
+
+                        // Reset Button
+                        initBtn.innerText = "RESUME SEQUENCE";
+                        initBtn.style.backgroundColor = ''; // Reset to default class styles
+                        initBtn.style.color = '';
+
+                        showNotification('SEQUENCE TERMINATED', 'Data saved to local ledger.');
+                    }
+                }, 800);
+            });
+
+
+            // --- CANVAS LOGIC ---
+            const canvas = document.getElementById('trailCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('canvas-container');
+            const speedDisplay = document.getElementById('speed-display');
+            const latVal = document.getElementById('lat-val');
+            const lonVal = document.getElementById('lon-val');
+
+            // Resize canvas to fit container
+            function resizeCanvas() {
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Trail logic
+            let points = [];
+            const maxPoints = 150; // Length of the trail
+            let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+            let lastMouse = { x: canvas.width / 2, y: canvas.height / 2 };
+            let lastTime = Date.now();
+
+            // Track mouse
+            container.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+                
+                // Simulate coordinate changes
+                if(isRecording) {
+                    latVal.innerText = (40.7128 + (mouse.y * 0.0001)).toFixed(4);
+                    lonVal.innerText = (74.0060 + (mouse.x * 0.0001)).toFixed(4);
+                }
+            });
+            
+            // Mobile touch support
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                mouse.x = touch.clientX - rect.left;
+                mouse.y = touch.clientY - rect.top;
+            }, { passive: false });
+
+            function addJitter(val, amount) {
+                return val + (Math.random() - 0.5) * amount;
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Add point if moved
+                const dist = Math.hypot(mouse.x - lastMouse.x, mouse.y - lastMouse.y);
+                
+                // Calculate simulated speed
+                const currentTime = Date.now();
+                lastTime = currentTime;
+                
+                // Update speed display (fake physics)
+                if (dist > 0) {
+                   const speed = Math.min((dist * 2), 25).toFixed(1);
+                   speedDisplay.innerText = `${speed} m/s`;
+                } else {
+                    speedDisplay.innerText = "0.0 m/s";
+                }
+
+                if (dist > 2) {
+                    points.push({
+                        x: addJitter(mouse.x, 2), // Jitter x
+                        y: addJitter(mouse.y, 2), // Jitter y
+                        age: 0
+                    });
+                    lastMouse.x = mouse.x;
+                    lastMouse.y = mouse.y;
+                }
+
+                // Remove old points
+                if (points.length > maxPoints) {
+                    points.shift();
+                }
+
+                // Draw Trail
+                if (points.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[0].x, points[0].y);
+
+                    for (let i = 1; i < points.length; i++) {
+                        const point = points[i];
+                        // Bezier curve for smoother (but still gritty) look
+                        const xc = (points[i].x + points[i - 1].x) / 2;
+                        const yc = (points[i].y + points[i - 1].y) / 2;
+                        ctx.quadraticCurveTo(points[i - 1].x, points[i - 1].y, xc, yc);
+                        
+                        point.age++;
+                    }
+                    
+                    // Ink Style
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.lineWidth = isRecording ? 8 : 4; // Thicker line when recording
+                    ctx.strokeStyle = isRecording ? '#FF4D00' : '#1C1C1C'; // Orange when recording, Black when not
+                    ctx.stroke();
+                }
+
+                // Draw Crosshair (The Player)
+                ctx.beginPath();
+                ctx.moveTo(mouse.x - 10, mouse.y);
+                ctx.lineTo(mouse.x + 10, mouse.y);
+                ctx.moveTo(mouse.x, mouse.y - 10);
+                ctx.lineTo(mouse.x, mouse.y + 10);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#1C1C1C';
+                ctx.stroke();
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        });
+    </script>
+</body>
+</html>
