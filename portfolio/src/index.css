@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Protocol Light Design System */
+    --canvas: 0 0% 100%;
+    --void: 0 0% 2%;
+    --construct: 0 0% 90%;
+    --pulse: 248 100% 50%;
+    
+    /* Semantic mappings */
+    --background: var(--canvas);
+    --foreground: var(--void);
+    
+    --card: var(--canvas);
+    --card-foreground: var(--void);
+    
+    --popover: var(--canvas);
+    --popover-foreground: var(--void);
+    
+    --primary: var(--void);
+    --primary-foreground: var(--canvas);
+    
+    --secondary: var(--construct);
+    --secondary-foreground: var(--void);
+    
+    --muted: var(--construct);
+    --muted-foreground: 0 0% 40%;
+    
+    --accent: var(--pulse);
+    --accent-foreground: var(--canvas);
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: var(--canvas);
+    
+    --border: var(--construct);
+    --input: var(--construct);
+    --ring: var(--pulse);
+    
+    --radius: 0;
+    
+    --sidebar-background: var(--canvas);
+    --sidebar-foreground: var(--void);
+    --sidebar-primary: var(--void);
+    --sidebar-primary-foreground: var(--canvas);
+    --sidebar-accent: var(--construct);
+    --sidebar-accent-foreground: var(--void);
+    --sidebar-border: var(--construct);
+    --sidebar-ring: var(--pulse);
+  }
+
+  .dark {
+    --background: var(--void);
+    --foreground: var(--canvas);
+    --card: var(--void);
+    --card-foreground: var(--canvas);
+    --popover: var(--void);
+    --popover-foreground: var(--canvas);
+    --primary: var(--canvas);
+    --primary-foreground: var(--void);
+    --secondary: 0 0% 15%;
+    --secondary-foreground: var(--canvas);
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: var(--pulse);
+    --accent-foreground: var(--canvas);
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: var(--pulse);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display uppercase tracking-tight;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--canvas));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--construct));
+    border: 1px solid hsl(var(--void));
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--void));
+  }
+  
+  /* Hide default cursor globally for custom cursor */
+  @media (pointer: fine) {
+    * {
+      cursor: none !important;
+    }
+  }
+}
+
+@layer components {
+  /* Glass Card */
+  .glass-card {
+    @apply bg-background border border-border transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply border-foreground;
+  }
+  
+  .glass-card:hover .glass-card-content {
+    @apply translate-x-1;
+  }
+  
+  .glass-card-content {
+    @apply transition-transform duration-300;
+  }
+  
+  /* Grid Section */
+  .grid-section {
+    @apply border-b border-border;
+  }
+  
+  /* Protocol Button - Primary */
+  .btn-protocol {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-foreground text-background font-mono text-sm uppercase
+           tracking-wider border border-foreground
+           transition-all duration-300;
+  }
+  
+  .btn-protocol:hover {
+    @apply bg-accent text-background border-accent;
+  }
+  
+  /* Protocol Button - Secondary */
+  .btn-protocol-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 
+           bg-background text-foreground font-mono text-sm uppercase
+           tracking-wider border border-foreground
+           transition-all duration-300;
+  }
+  
+  .btn-protocol-secondary:hover {
+    @apply bg-foreground text-background;
+  }
+  
+  /* Underline Link Animation */
+  .link-underline {
+    @apply relative inline-block;
+  }
+  
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-px bg-current
+           origin-left scale-x-0 transition-transform duration-300;
+  }
+  
+  .link-underline:hover::after {
+    @apply scale-x-100;
+  }
+  
+  /* Terminal Input */
+  .terminal-input {
+    @apply w-full bg-transparent border-0 border-b border-border
+           font-mono text-sm py-2 outline-none
+           transition-colors duration-300
+           focus:border-foreground;
+  }
+  
+  .terminal-input::placeholder {
+    @apply text-muted-foreground;
+  }
+  
+  /* Mono Label */
+  .mono-label {
+    @apply font-mono text-xs uppercase tracking-wider text-muted-foreground mb-2 block;
+  }
+  
+  /* Section Header */
+  .section-header {
+    @apply font-mono text-xs uppercase tracking-wider text-muted-foreground mb-8;
+  }
+  
+  /* Metadata display */
+  .metadata {
+    @apply font-mono text-xs uppercase tracking-wider text-muted-foreground;
+  }
+  
+  /* Tag chip */
+  .tag-chip {
+    @apply inline-block px-3 py-1 border border-border font-mono text-xs uppercase
+           transition-colors duration-300;
+  }
+  
+  .tag-chip:hover {
+    @apply border-foreground;
+  }
+}
+
+@layer utilities {
+  /* Text decrypt animation effect */
+  .decrypt-text {
+    @apply font-mono;
+  }
+  
+  /* Chromatic aberration effect on images */
+  .chromatic-image {
+    @apply transition-all duration-300;
+  }
+  
+  .chromatic-layer {
+    mix-blend-mode: screen;
+  }
+  
+  .chromatic-red {
+    filter: grayscale(100%);
+  }
+  
+  .chromatic-red img {
+    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeColorMatrix values='1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3C/svg%3E#r");
+    transform: translate(-3px, 0);
+  }
+  
+  .chromatic-blue {
+    filter: grayscale(100%);
+  }
+  
+  .chromatic-blue img {
+    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='b'%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3C/svg%3E#b");
+    transform: translate(3px, 0);
+  }
+  
+  /* Visible grid background */
+  .grid-bg {
+    background-image: 
+      linear-gradient(to right, hsl(var(--construct)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--construct)) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+  
+  /* Fine grid background */
+  .grid-bg-fine {
+    background-image: 
+      linear-gradient(to right, hsl(var(--construct)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--construct)) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}

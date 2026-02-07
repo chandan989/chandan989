@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Folio Explorer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepSpace: '#0B0D1F',
+                        starlight: '#FFFFFF',
+                        nebula: '#6C63FF',
+                        comet: '#00D2FF',
+                        planet: '#FF9F43',
+                        void: '#2D3047',
+                    },
+                    fontFamily: {
+                        nunito: ['Nunito', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                    },
+                    animation: {
+                        float: 'float 6s ease-in-out infinite',
+                        twinkle: 'twinkle 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                            '50%': { opacity: '1', transform: 'scale(1.2)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Hide default cursor on desktop */
+        @media (min-width: 768px) {
+            body {
+                cursor: none;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0D1F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3047;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6C63FF;
+        }
+
+        .selection-nebula ::selection {
+            background-color: #6C63FF;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-deepSpace text-starlight font-nunito overflow-x-hidden selection-nebula">
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor" class="fixed top-0 left-0 pointer-events-none z-[9999] hidden md:block -mt-4 -ml-4 transition-transform duration-75 ease-out will-change-transform">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2 L20 10 L28 12 L22 18 L24 26 L16 22 L8 26 L10 18 L4 12 L12 10 L16 2Z" fill="#6C63FF" stroke="#2D3047" stroke-width="2" />
+            <path d="M16 22 L16 30" stroke="#FF9F43" stroke-width="2" />
+        </svg>
+    </div>
+
+    <!-- Star Background Container -->
+    <div id="star-background" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-20 right-20 opacity-20 w-32 h-32 rounded-full bg-purple-900 blur-2xl"></div>
+        <div class="absolute bottom-40 left-10 opacity-10 w-48 h-48 rounded-full bg-blue-900 blur-3xl"></div>
+        <!-- Stars injected via JS -->
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 p-6 flex justify-center">
+        <div class="relative bg-deepSpace/80 backdrop-blur-md border border-void rounded-full px-8 py-4 shadow-2xl shadow-purple-900/20 max-w-4xl w-full flex justify-between items-center">
+            <div class="font-orbitron font-black text-xl tracking-wider flex items-center gap-2">
+                <span class="text-nebula">COSMIC</span>
+                <span class="text-white">FOLIO</span>
+            </div>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="#home" class="font-bold text-sm hover:text-comet transition-colors relative group">
+                    Mission Control
+                    <span class="absolute -left-4 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-planet">●</span>
+                </a>
+                <a href="#about" class="font-bold text-sm hover:text-comet transition-colors relative group">
+                    Logbook
+                    <span class="absolute -left-4 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-planet">●</span>
+                </a>
+                <a href="#projects" class="font-bold text-sm hover:text-comet transition-colors relative group">
+                    Discoveries
+                    <span class="absolute -left-4 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-planet">●</span>
+                </a>
+                <a href="#contact" class="font-bold text-sm hover:text-comet transition-colors relative group">
+                    Signals
+                    <span class="absolute -left-4 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-planet">●</span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Nav Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-deepSpace pt-32 px-6 hidden md:hidden flex-col items-center gap-6 text-center transition-opacity duration-300">
+        <button id="close-menu-btn" class="absolute top-8 right-8 text-white">
+            <i data-lucide="x"></i>
+        </button>
+        <a href="#home" class="mobile-link font-orbitron text-2xl font-bold text-white hover:text-comet">Mission Control</a>
+        <a href="#about" class="mobile-link font-orbitron text-2xl font-bold text-white hover:text-comet">Logbook</a>
+        <a href="#projects" class="mobile-link font-orbitron text-2xl font-bold text-white hover:text-comet">Discoveries</a>
+        <a href="#contact" class="mobile-link font-orbitron text-2xl font-bold text-white hover:text-comet">Signals</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center pt-20 relative container mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center w-full">
+            <div class="space-y-6 z-10 order-2 md:order-1">
+                <span class="inline-block px-4 py-2 rounded-full bg-void text-planet font-bold text-sm border border-void mb-4">
+                    ✨ Ready for liftoff
+                </span>
+                <h1 class="font-orbitron font-black text-5xl md:text-7xl leading-tight">
+                    Exploring the <br />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-nebula to-comet">
+                        Creative Galaxy
+                    </span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 max-w-lg">
+                    Welcome aboard, explorer! I design and build digital universes that are out of this world. Buckle up for a journey through code and creativity.
+                </p>
+                <div class="flex gap-4 pt-4">
+                    <button class="font-nunito font-bold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 bg-nebula text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 border-2 border-void">
+                        Start Journey
+                    </button>
+                    <button class="font-nunito font-bold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 bg-transparent border-2 border-comet text-comet hover:bg-comet hover:text-deepSpace shadow-[0_0_10px_rgba(0,210,255,0.2)] hover:shadow-[0_0_20px_rgba(0,210,255,0.6)]">
+                        View Starmap
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative flex justify-center z-10 animate-float order-1 md:order-2">
+                <!-- Background Glow -->
+                <div class="absolute inset-0 bg-nebula opacity-20 blur-[100px] rounded-full"></div>
+                <!-- Astronaut Icon -->
+                <svg viewBox="0 0 100 100" class="w-64 h-64 md:w-96 md:h-96 relative z-10 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g stroke="#2D3047" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M30 65 C30 65, 25 85, 30 95 H70 C75 85, 70 65, 70 65" fill="white" />
+                        <path d="M30 70 C20 75, 15 65, 20 60" fill="white" />
+                        <path d="M70 70 C80 75, 85 65, 80 60" fill="white" />
+                        <circle cx="50" cy="45" r="30" fill="white" />
+                        <ellipse cx="50" cy="45" rx="22" ry="18" fill="#0B0D1F" />
+                        <ellipse cx="58" cy="40" rx="5" ry="3" fill="white" opacity="0.8" stroke="none"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Divider -->
+    <div class="w-full overflow-hidden leading-none text-deepSpace">
+        <svg class="relative block w-[calc(100%+1.3px)] h-[60px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="currentColor"></path>
+        </svg>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-void relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center gap-16">
+                <div class="w-full md:w-1/3 flex justify-center">
+                    <div class="relative">
+                        <!-- Alien Icon -->
+                        <svg viewBox="0 0 100 100" class="w-48 h-48 animate-bounce" style="animation-duration: 2s;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="#2D3047" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 80 C15 50, 25 20, 50 15 C75 20, 85 50, 80 80 C70 95, 30 95, 20 80" fill="#A8E6CF" />
+                                <circle cx="35" cy="45" r="6" fill="white" />
+                                <circle cx="35" cy="45" r="2" fill="black" stroke="none" />
+                                <circle cx="65" cy="45" r="6" fill="white" />
+                                <circle cx="65" cy="45" r="2" fill="black" stroke="none" />
+                                <circle cx="50" cy="35" r="8" fill="white" />
+                                <circle cx="50" cy="35" r="3" fill="black" stroke="none" />
+                                <path d="M40 65 Q50 75 60 65" fill="none" />
+                            </g>
+                        </svg>
+                        <div class="absolute -top-10 -right-10 bg-white text-deepSpace p-4 rounded-xl rounded-bl-none font-bold text-sm shadow-xl max-w-[150px]">
+                            "Greetings Earthling! I'm the co-pilot."
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3 space-y-6">
+                    <h2 class="font-orbitron font-bold text-4xl mb-6 flex items-center gap-4 text-white">
+                        <span class="text-planet">01.</span> The Logbook
+                    </h2>
+                    <p class="text-lg leading-relaxed text-gray-200">
+                        I'm a Full Stack Explorer based in the Milky Way. My mission is to simplify complex problems and create delightful user interfaces. Just like space travel, I believe code should be clean, efficient, and capable of taking people to new places.
+                    </p>
+                    <p class="text-lg leading-relaxed text-gray-200">
+                        When I'm not coding, you can find me calibrating my telescope (debugging), exploring new planets (hiking), or fueling up at the mess hall (coffee shops).
+                    </p>
+
+                    <!-- Skills Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                        <div class="bg-deepSpace text-white p-4 rounded-lg text-center font-bold border-b-4 border-nebula">React</div>
+                        <div class="bg-deepSpace text-white p-4 rounded-lg text-center font-bold border-b-4 border-nebula">Node.js</div>
+                        <div class="bg-deepSpace text-white p-4 rounded-lg text-center font-bold border-b-4 border-nebula">UI/UX</div>
+                        <div class="bg-deepSpace text-white p-4 rounded-lg text-center font-bold border-b-4 border-nebula">TypeScript</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Divider Flipped -->
+    <div class="w-full overflow-hidden leading-none text-deepSpace rotate-180">
+        <svg class="relative block w-[calc(100%+1.3px)] h-[60px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="currentColor"></path>
+        </svg>
+    </div>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-orbitron font-black text-4xl mb-4 text-white">Planetary Discoveries</h2>
+                <p class="text-gray-400">Selected missions and experiments</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card 1 -->
+                <div class="group relative bg-void rounded-2xl p-6 border-2 border-void hover:border-nebula transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(108,99,255,0.2)]">
+                    <span class="absolute -top-3 -right-3 bg-planet text-deepSpace font-orbitron text-xs font-bold px-3 py-1 rounded-full border-2 border-void transform rotate-12">NEW!</span>
+                    <div class="h-48 w-full bg-[#1e2136] rounded-xl mb-4 overflow-hidden relative border-4 border-[#1e2136] group-hover:border-comet transition-colors">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-100 transition-opacity">
+                            <svg viewBox="0 0 100 100" class="w-20 h-20 animate-pulse" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g stroke="#2D3047" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="50" cy="50" r="25" fill="#FF9F43" />
+                                    <path d="M20 65 Q50 35 80 35" fill="none" stroke-width="4" stroke="#00D2FF" />
+                                    <path d="M25 60 Q50 30 75 30" fill="none" stroke-width="2" stroke="white" opacity="0.5" stroke-dasharray="4 4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="absolute top-4 left-4 w-4 h-4 rounded-full bg-white opacity-20"></div>
+                    </div>
+                    <h3 class="font-orbitron text-xl font-bold text-white mb-2">Nebula Dashboard</h3>
+                    <p class="font-nunito text-gray-300 mb-4">A SaaS analytics platform built for intergalactic commerce tracking.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">React</span>
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">D3.js</span>
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">Firebase</span>
+                    </div>
+                    <div class="flex justify-end">
+                        <a href="#" class="text-nebula hover:text-comet transition-colors"><i data-lucide="external-link"></i></a>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="group relative bg-void rounded-2xl p-6 border-2 border-void hover:border-nebula transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(108,99,255,0.2)]">
+                    <div class="h-48 w-full bg-[#1e2136] rounded-xl mb-4 overflow-hidden relative border-4 border-[#1e2136] group-hover:border-comet transition-colors">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-100 transition-opacity">
+                            <svg viewBox="0 0 100 100" class="w-20 h-20 animate-pulse" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g stroke="#2D3047" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="50" cy="50" r="25" fill="#FF9F43" />
+                                    <path d="M20 65 Q50 35 80 35" fill="none" stroke-width="4" stroke="#00D2FF" />
+                                    <path d="M25 60 Q50 30 75 30" fill="none" stroke-width="2" stroke="white" opacity="0.5" stroke-dasharray="4 4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="absolute top-4 left-4 w-4 h-4 rounded-full bg-white opacity-20"></div>
+                    </div>
+                    <h3 class="font-orbitron text-xl font-bold text-white mb-2">Rover Control</h3>
+                    <p class="font-nunito text-gray-300 mb-4">Mobile application to remote control IoT devices on Mars.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">React Native</span>
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">Bluetooth API</span>
+                    </div>
+                    <div class="flex justify-end">
+                        <a href="#" class="text-nebula hover:text-comet transition-colors"><i data-lucide="external-link"></i></a>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="group relative bg-void rounded-2xl p-6 border-2 border-void hover:border-nebula transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(108,99,255,0.2)]">
+                    <div class="h-48 w-full bg-[#1e2136] rounded-xl mb-4 overflow-hidden relative border-4 border-[#1e2136] group-hover:border-comet transition-colors">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-100 transition-opacity">
+                             <svg viewBox="0 0 100 100" class="w-20 h-20 animate-pulse" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g stroke="#2D3047" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="50" cy="50" r="25" fill="#FF9F43" />
+                                    <path d="M20 65 Q50 35 80 35" fill="none" stroke-width="4" stroke="#00D2FF" />
+                                    <path d="M25 60 Q50 30 75 30" fill="none" stroke-width="2" stroke="white" opacity="0.5" stroke-dasharray="4 4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="absolute top-4 left-4 w-4 h-4 rounded-full bg-white opacity-20"></div>
+                    </div>
+                    <h3 class="font-orbitron text-xl font-bold text-white mb-2">Star Dust UI</h3>
+                    <p class="font-nunito text-gray-300 mb-4">An open-source design system for rapid spaceship prototyping.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">Figma</span>
+                        <span class="text-xs font-nunito font-bold px-2 py-1 rounded-md bg-deepSpace text-comet">Storybook</span>
+                    </div>
+                    <div class="flex justify-end">
+                        <a href="#" class="text-nebula hover:text-comet transition-colors"><i data-lucide="external-link"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16">
+                 <button class="font-nunito font-bold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center gap-2 bg-transparent border-2 border-comet text-comet hover:bg-comet hover:text-deepSpace shadow-[0_0_10px_rgba(0,210,255,0.2)] hover:shadow-[0_0_20px_rgba(0,210,255,0.6)]">
+                     View All Transmissions
+                 </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-deepSpace relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] border border-void rounded-full opacity-50 pointer-events-none"></div>
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] border border-void rounded-full opacity-50 pointer-events-none"></div>
+
+        <div class="container mx-auto px-6 relative z-10 max-w-2xl text-center">
+            <div class="mb-8 flex justify-center">
+                <div class="w-20 h-20 bg-nebula rounded-full flex items-center justify-center">
+                    <i data-lucide="mail" class="text-white w-10 h-10"></i>
+                </div>
+            </div>
+
+            <h2 class="font-orbitron font-black text-4xl mb-6 text-white">Send a Signal</h2>
+            <p class="text-gray-300 mb-10 text-lg">
+                Whether you want to collaborate on a new mission or just say hello to my alien sidekick, my communication channels are open.
+            </p>
+
+            <form class="space-y-4 text-left bg-void/50 p-8 rounded-2xl border border-void backdrop-blur-sm">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-2 ml-1 text-comet">Explorer Name</label>
+                        <input type="text" class="w-full bg-deepSpace border border-void rounded-lg p-3 text-white focus:outline-none focus:border-nebula transition-colors" placeholder="Captain Kirk" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2 ml-1 text-comet">Frequency (Email)</label>
+                        <input type="email" class="w-full bg-deepSpace border border-void rounded-lg p-3 text-white focus:outline-none focus:border-nebula transition-colors" placeholder="kirk@enterprise.com" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-2 ml-1 text-comet">Transmission</label>
+                    <textarea rows="4" class="w-full bg-deepSpace border border-void rounded-lg p-3 text-white focus:outline-none focus:border-nebula transition-colors" placeholder="We come in peace..."></textarea>
+                </div>
+                <button type="button" class="w-full font-nunito font-bold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 bg-nebula text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 border-2 border-void">
+                   Transmit Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-deepSpace border-t border-void py-12">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="font-orbitron font-bold text-xl text-white">
+                COSMIC<span class="text-nebula">FOLIO</span>
+            </div>
+
+            <div class="flex gap-6">
+                <a href="#" class="w-10 h-10 rounded-full bg-void flex items-center justify-center hover:bg-nebula hover:scale-110 transition-all duration-300">
+                    <i data-lucide="github" class="text-white w-5 h-5"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-void flex items-center justify-center hover:bg-nebula hover:scale-110 transition-all duration-300">
+                    <i data-lucide="twitter" class="text-white w-5 h-5"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-full bg-void flex items-center justify-center hover:bg-nebula hover:scale-110 transition-all duration-300">
+                    <i data-lucide="linkedin" class="text-white w-5 h-5"></i>
+                </a>
+            </div>
+
+            <p class="text-gray-500 text-sm">
+                © <span id="year"></span> Stellar Systems Inc.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactions -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Set Current Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.classList.add('flex');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // Generate Star Background
+        const starContainer = document.getElementById('star-background');
+        for (let i = 0; i < 20; i++) {
+            const star = document.createElement('div');
+            star.className = 'absolute rounded-full bg-white opacity-70 animate-twinkle';
+
+            // Random properties
+            const top = Math.random() * 100;
+            const left = Math.random() * 100;
+            const size = Math.random() * 3 + 1;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 3 + 2;
+
+            star.style.cssText = `
+                top: ${top}%;
+                left: ${left}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-delay: ${delay}s;
+                animation-duration: ${duration}s;
+            `;
+
+            starContainer.appendChild(star);
+        }
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('custom-cursor');
+
+        document.addEventListener('mousemove', (e) => {
+            // Using transform for better performance than top/left
+            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+        });
+
+    </script>
+</body>
+</html>

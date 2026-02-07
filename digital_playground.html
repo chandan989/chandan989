@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Playground Portfolio</title>
+
+    <!-- Tailwind CSS (via CDN for single file portability) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons (Vector Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- 1. DESIGN VARIABLES --- */
+        :root {
+            --bg-color: #F7F7F7;       /* Graph Paper White */
+            --grid-color: #E0E5EB;     /* Drafting Blue */
+            --text-primary: #111111;   /* Ink Black */
+            --accent-orange: #FF9F1C;  /* Safety Orange */
+            --accent-green: #2D6A4F;   /* Matcha Green */
+            --border-grey: #CCCCCC;    /* Stroke Grey */
+        }
+
+        /* --- 2. BASE TYPOGRAPHY --- */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            /* Creating the Graph Paper Grid */
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Font Classes */
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .font-mono-sys {
+            font-family: 'Space Mono', monospace;
+        }
+
+        .font-badge {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        /* --- 3. UI COMPONENTS & STICKERS --- */
+
+        /* The Main Container "Print Sheet" */
+        .print-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
+            /* Simulating paper boundaries */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        }
+
+        /* Crop Marks (The L shapes) */
+        .crop-mark {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--text-primary);
+            border-style: solid;
+            pointer-events: none;
+        }
+        .crop-tl { top: -10px; left: -10px; border-width: 2px 0 0 2px; }
+        .crop-tr { top: -10px; right: -10px; border-width: 2px 2px 0 0; }
+        .crop-bl { bottom: -10px; left: -10px; border-width: 0 0 2px 2px; }
+        .crop-br { bottom: -10px; right: -10px; border-width: 0 2px 2px 0; }
+
+        /* Sticker Base Styles */
+        .sticker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.15));
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sticker:hover {
+            transform: scale(1.05) rotate(2deg);
+            z-index: 20;
+        }
+
+        /* Sticker Variants */
+        .sticker-badge {
+            background-color: var(--accent-orange);
+            color: white;
+            border-radius: 9999px; /* Pill/Oval */
+            border: 2px solid white;
+        }
+
+        .sticker-square {
+            background-color: var(--text-primary);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .sticker-holo {
+            background: linear-gradient(135deg, #00FFFF, #FF00FF);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Holo shine effect */
+        .sticker-holo::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: holo-shine 3s infinite;
+        }
+
+        @keyframes holo-shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* Project Cards (Polaroid Style) */
+        .project-card {
+            background: white;
+            padding: 12px 12px 24px 12px;
+            border: 1px solid var(--border-grey);
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        .project-image-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            border: 1px solid #eee;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            filter: grayscale(20%);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+
+        /* Buttons */
+        .btn-retro {
+            background-color: var(--text-primary);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-retro:hover {
+            background-color: var(--accent-orange);
+            color: white;
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0px rgba(0,0,0,1);
+        }
+
+        /* Utility adjustments */
+        .text-stroke {
+            -webkit-text-stroke: 1px var(--text-primary);
+            color: transparent;
+        }
+
+        /* Decorative Rotation Classes */
+        .rotate-neg-2 { transform: rotate(-2deg); }
+        .rotate-pos-3 { transform: rotate(3deg); }
+        .rotate-pos-1 { transform: rotate(1deg); }
+
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 lg:p-12 flex flex-col items-center">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="w-full max-w-6xl mb-12 flex justify-between items-center z-50 relative">
+        <div class="font-badge text-xl tracking-tighter bg-white border border-gray-300 px-3 py-1 rotate-neg-2 shadow-sm">
+            RW.DSGN_SYS
+        </div>
+        <ul class="flex gap-6 font-mono-sys text-sm">
+            <li><a href="#work" class="hover:bg-black hover:text-white px-1 transition-colors">WORK_</a></li>
+            <li><a href="#about" class="hover:bg-black hover:text-white px-1 transition-colors">ABOUT_</a></li>
+            <li><a href="#contact" class="hover:bg-black hover:text-white px-1 transition-colors">CONTACT_</a></li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTAINER (Crop Marks & Paper Feel) -->
+    <main class="print-container w-full max-w-6xl p-6 md:p-16 mb-20">
+
+        <!-- Decorative Crop Marks -->
+        <div class="crop-mark crop-tl"></div>
+        <div class="crop-mark crop-tr"></div>
+        <div class="crop-mark crop-bl"></div>
+        <div class="crop-mark crop-br"></div>
+
+        <!-- HERO SECTION -->
+        <section class="relative mb-24 pt-10">
+
+            <!-- Metadata line -->
+            <div class="font-mono-sys text-xs text-gray-500 mb-4 border-b border-gray-300 pb-2 inline-block">
+                :: STATUS: OPEN FOR COMMISSIONS // LOC: JAKARTA, ID
+            </div>
+
+            <!-- Sticker: Hello -->
+            <div class="absolute -top-6 right-0 md:right-20 sticker sticker-badge px-6 py-2 rotate-pos-3 hidden md:flex">
+                <span class="font-badge text-lg">HELLO WORLD</span>
+            </div>
+
+            <!-- Main Heading -->
+            <div class="relative z-10">
+                <h1 class="font-display text-6xl md:text-8xl lg:text-9xl leading-[0.9] tracking-tight mb-6">
+                    Rudityas <br>
+                    <span class="pl-12 md:pl-24 italic text-stroke md:text-black">Wahyu</span>
+                </h1>
+            </div>
+
+            <!-- Introduction Text -->
+            <div class="flex flex-col md:flex-row gap-8 items-start mt-8">
+                <div class="md:w-1/2 relative">
+                    <!-- Holo Sticker -->
+                    <div class="sticker sticker-holo px-3 py-1 text-xs font-mono-sys absolute -top-4 -left-4 rotate-neg-2">
+                        ★ VERIFIED HUMAN
+                    </div>
+
+                    <p class="font-mono-sys text-sm md:text-base leading-relaxed bg-white/80 p-4 border-l-2 border-black">
+                        A multidisciplinary designer treating the web like a digital cutting mat.
+                        Focusing on messy organized interfaces, retro-tech aesthetics, and functional chaos.
+                    </p>
+
+                    <div class="mt-6 flex gap-4">
+                        <button class="btn-retro">
+                            EXPLORE PROJECTS <i class="ph ph-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Decorative Elements Cluster -->
+                <div class="md:w-1/2 flex justify-center md:justify-end relative h-32 md:h-auto">
+                    <!-- Green Badge -->
+                    <div class="sticker bg-[#2D6A4F] text-white rounded-full w-24 h-24 flex items-center justify-center text-center font-badge text-xs leading-tight absolute top-0 right-10 rotate-pos-3 border-2 border-white shadow-lg">
+                        SUSTAINABLE<br>WEB<br>DESIGN
+                    </div>
+                    <!-- Pixel Ghost -->
+                    <div class="absolute top-10 right-32 opacity-80">
+                         <i class="ph ph-ghost text-4xl"></i>
+                    </div>
+                    <!-- Japanese Tag -->
+                    <div class="sticker bg-white border border-black px-2 py-4 font-display font-bold text-xl vertical-lr writing-mode-vertical absolute top-0 right-0 shadow-[4px_4px_0px_#FF9F1C]">
+                        ポートフォリオ
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORK SECTION -->
+        <section id="work" class="mb-24">
+            <div class="flex items-end gap-4 mb-12 border-b border-gray-300 pb-4">
+                <h2 class="font-display text-4xl md:text-5xl">Selected Works</h2>
+                <span class="font-mono-sys text-xs mb-2"> (2023 - 2025) </span>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+
+                <!-- Project 1 -->
+                <article class="project-card rotate-neg-1">
+                    <div class="project-image-container">
+                        <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2700&auto=format&fit=crop" alt="Daleme Interior" class="project-image">
+                        <!-- Sticker on Image -->
+                        <div class="sticker absolute top-2 right-2 bg-white text-black text-xs font-mono-sys px-2 py-1 border border-black shadow-sm">
+                            v1.0
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-display text-2xl mb-1">Daleme Interior</h3>
+                            <p class="font-mono-sys text-xs text-gray-500">UX / UI / BRANDING</p>
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center border border-black hover:bg-black hover:text-white transition-colors">
+                            <i class="ph ph-arrow-up-right"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Project 2 -->
+                <article class="project-card translate-y-0 md:translate-y-12 rotate-pos-1">
+                    <div class="project-image-container">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop" alt="Cyber Dashboard" class="project-image">
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-display text-2xl mb-1">Nexus Dashboard</h3>
+                            <p class="font-mono-sys text-xs text-gray-500">FRONTEND / REACT</p>
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center border border-black hover:bg-black hover:text-white transition-colors">
+                            <i class="ph ph-arrow-up-right"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Project 3 -->
+                <article class="project-card rotate-pos-1">
+                    <div class="project-image-container">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Typography System" class="project-image">
+                        <!-- Holographic Sticker -->
+                        <div class="sticker sticker-holo absolute bottom-4 left-4 px-3 py-1 text-xs font-bold font-mono-sys rounded-sm">
+                            AWARDED
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-display text-2xl mb-1">Mono Type Sys</h3>
+                            <p class="font-mono-sys text-xs text-gray-500">TYPOGRAPHY / PRINT</p>
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center border border-black hover:bg-black hover:text-white transition-colors">
+                            <i class="ph ph-arrow-up-right"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Project 4 -->
+                <article class="project-card translate-y-0 md:translate-y-12 rotate-neg-2">
+                    <div class="project-image-container">
+                        <img src="https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=2670&auto=format&fit=crop" alt="Analog Photography" class="project-image">
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-display text-2xl mb-1">Film Archive</h3>
+                            <p class="font-mono-sys text-xs text-gray-500">PHOTOGRAPHY / CURATION</p>
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center border border-black hover:bg-black hover:text-white transition-colors">
+                            <i class="ph ph-arrow-up-right"></i>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- PLAYGROUND / ABOUT SECTION -->
+        <section id="about" class="mb-12 border-t-2 border-black pt-12">
+            <div class="flex flex-col md:flex-row gap-12">
+
+                <!-- Left: Stats & Tech -->
+                <div class="md:w-1/3 font-mono-sys text-sm">
+                    <h4 class="bg-black text-white inline-block px-2 py-1 mb-6">TECH_STACK.json</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 bg-[#FF9F1C] block"></span> HTML5 / CSS3 (Semantic)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 bg-[#2D6A4F] block"></span> React / Next.js
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 border border-black block"></span> WebGL / Three.js
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 bg-gray-400 block"></span> Figma / Illustrator
+                        </li>
+                    </ul>
+
+                    <div class="mt-12 p-4 border border-dashed border-gray-400 bg-gray-50 relative">
+                        <i class="ph ph-push-pin text-xl absolute -top-3 -right-2 text-[#FF9F1C] drop-shadow-md"></i>
+                        <p class="italic text-gray-600">"Design is intelligence made visible, but chaos makes it memorable."</p>
+                    </div>
+                </div>
+
+                <!-- Right: About Text -->
+                <div class="md:w-2/3">
+                    <h2 class="font-display text-4xl mb-6">The Methodology</h2>
+                    <p class="font-mono-sys text-sm leading-7 mb-6 text-gray-800">
+                        I believe the internet has become too polished. We lost the tactility of the early web. My work aims to bring back the feeling of physical artifacts—stickers, tape, paper texture—while maintaining modern performance and usability.
+                    </p>
+                    <p class="font-mono-sys text-sm leading-7 text-gray-800">
+                        Currently based in Jakarta, working with clients globally to build identities that don't just sit on a screen, but feel like they occupy space.
+                    </p>
+
+                    <!-- Sticker Bomb Footer Area -->
+                    <div class="mt-12 h-24 relative border-b border-gray-200">
+                        <div class="sticker bg-black text-white px-2 font-bold font-badge text-2xl absolute left-0 bottom-2 rotate-neg-2">
+                            CREATIVE
+                        </div>
+                        <div class="sticker bg-white border-2 border-[#FF9F1C] text-[#FF9F1C] px-3 py-1 font-mono-sys rounded-full absolute left-36 bottom-6 rotate-pos-3">
+                            open to work
+                        </div>
+                        <div class="sticker absolute left-72 bottom-0 text-3xl">
+                             👾
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="w-full max-w-6xl pb-12 flex flex-col md:flex-row justify-between items-end px-6 md:px-0">
+        <div>
+            <h2 class="font-display text-3xl mb-2">Let's make a mess together.</h2>
+            <a href="mailto:hello@rudityas.com" class="font-mono-sys text-lg hover:bg-[#FF9F1C] hover:text-white transition-colors border-b border-black">
+                hello@rudityas.com ↗
+            </a>
+        </div>
+
+        <div class="text-right mt-8 md:mt-0 font-mono-sys text-xs text-gray-400">
+            <p>© 2024 RUDITYAS WAHYU.</p>
+            <p>BUILT ON THE GRID.</p>
+        </div>
+    </footer>
+
+    <!-- Simple Script for Sticker Interaction -->
+    <script>
+        // Add a satisfying little click effect to stickers
+        document.querySelectorAll('.sticker').forEach(sticker => {
+            sticker.addEventListener('mousedown', () => {
+                sticker.style.transform = 'scale(0.95)';
+            });
+            sticker.addEventListener('mouseup', () => {
+                sticker.style.transform = 'scale(1.05) rotate(' + (Math.random() * 10 - 5) + 'deg)';
+            });
+        });
+    </script>
+</body>
+</html>
